@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FRONTEND.ODYSSEY // THE_JOURNEY</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-container-highest": "#32353b",
+          "secondary": "#a4c9ff",
+          "background": "#101319",
+          "surface-bright": "#36393f",
+          "inverse-surface": "#e1e2ea",
+          "on-surface": "#e1e2ea",
+          "tertiary": "#ffcec9",
+          "surface-container-low": "#191c21",
+          "on-error-container": "#ffdad6",
+          "on-tertiary": "#68000a",
+          "inverse-primary": "#006d3c",
+          "surface-container-high": "#272a30",
+          "primary-container": "#00d97e",
+          "secondary-fixed": "#d4e3ff",
+          "tertiary-fixed": "#ffdad7",
+          "surface-tint": "#22e286",
+          "surface-variant": "#32353b",
+          "error-container": "#93000a",
+          "error": "#ffb4ab",
+          "on-background": "#e1e2ea",
+          "on-secondary-container": "#d6e5ff",
+          "on-primary-fixed-variant": "#00522c",
+          "on-secondary-fixed": "#001c39",
+          "surface": "#101319",
+          "surface-container-lowest": "#0b0e13",
+          "outline-variant": "#3c4a3f",
+          "on-tertiary-fixed-variant": "#930013",
+          "primary-fixed": "#5affa2",
+          "on-primary-container": "#005930",
+          "on-error": "#690005",
+          "secondary-fixed-dim": "#a4c9ff",
+          "on-primary": "#00391d",
+          "outline": "#859587",
+          "on-surface-variant": "#bacbbc",
+          "on-secondary-fixed-variant": "#004883",
+          "on-tertiary-fixed": "#410004",
+          "primary": "#44f697",
+          "inverse-on-surface": "#2d3036",
+          "on-secondary": "#00315d",
+          "primary-fixed-dim": "#22e286",
+          "secondary-container": "#0267b8",
+          "tertiary-container": "#ffa6a0",
+          "on-tertiary-container": "#9e0016",
+          "surface-dim": "#101319",
+          "surface-container": "#1d2025",
+          "on-primary-fixed": "#00210e",
+          "tertiary-fixed-dim": "#ffb3ad"
+        },
+        fontFamily: {
+          "headline": ["Syne", "sans-serif"],
+          "body": ["JetBrains Mono", "monospace"],
+          "label": ["Space Grotesk", "sans-serif"]
+        },
+        animation: {
+          'flicker': 'flicker 0.15s infinite',
+          'reveal': 'reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          'float': 'float 4s ease-in-out infinite',
+          'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          'scanline': 'scanline 8s linear infinite',
+        },
+        keyframes: {
+          flicker: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.8' } },
+          reveal: { '0%': { opacity: '0', transform: 'translateY(30px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          float: { '0%, 100%': { transform: 'translateY(0) scale(1)' }, '50%': { transform: 'translateY(-20px) scale(1.05)' } },
+          scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } }
+        }
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .scanline {
+    background: linear-gradient(to bottom, transparent 50%, rgba(68,246,151,0.03) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+  }
+  .scanline::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent, rgba(68,246,151,0.05), transparent);
+    height: 100px;
+    animation: scanline 8s linear infinite;
+  }
+  .dot-grid {
+    background-image: radial-gradient(circle, rgba(68,246,151,0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .glitch-text { text-shadow: 2px 0 #ffcec9, -2px 0 #a4c9ff; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #101319; }
+  ::-webkit-scrollbar-thumb { background: #44f697; border-radius: 0px; }
+  .spotlight {
+    background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(68,246,151,0.06), transparent 50%);
+  }
+  .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16,1,0.3,1); }
+  .reveal-on-scroll.visible { opacity: 1; transform: translateY(0); }
+  .interactive-card { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); cursor: pointer; border: 1px solid rgba(68,246,151,0.1); }
+  .interactive-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 30px rgba(68,246,151,0.1); border-color: rgba(68,246,151,0.4); }
+  .interactive-card:active { transform: scale(0.98); }
+  .parallax-layer { transition: transform 0.1s ease-out; }
+  @keyframes typing { from { width: 0 } to { width: 100% } }
+  .typing-effect {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid #44f697;
+    animation: typing 2s steps(40, end), blink-caret .75s step-end infinite;
+  }
+  @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #44f697 } }
+  .floating-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+  #mouse-canvas { position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
+  #shutdown-overlay {
+    position: fixed; inset: 0; background: black; z-index: 9999;
+    opacity: 0; pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 1.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  #matrix-canvas { position: fixed; inset: 0; z-index: 9998; pointer-events: none; display: none; }
+  .magnetic { transition: transform 0.2s cubic-bezier(0.175,0.885,0.32,1.275); }
+
+  /* FIX: commit card expand */
+  .commit-card .commit-details { display: none; }
+  .commit-card.expanded .commit-details { display: block; }
+
+  /* FIX: bug counter glow on low count */
+  #bug-counter.low { color: #44f697 !important; text-shadow: 0 0 20px rgba(68,246,151,0.6); }
+
+  /* Coffee cup click feedback */
+  #coffee-cup { user-select: none; }
+  #coffee-cup:active { transform: scale(0.95); }
+
+  /* Nav active state */
+  .nav-item.active-nav {
+    color: #44f697 !important;
+    background: rgba(68,246,151,0.05) !important;
+    border-left: 2px solid #44f697 !important;
+  }
+  .nav-item { transition: all 0.3s ease; }
+
+  @media (max-width: 768px) {
+    .sidebar-nav {
+      width: 100%; height: auto; bottom: 0; top: auto;
+      flex-direction: row; padding: 0.5rem;
+      justify-content: space-around;
+      border-right: none;
+      border-top: 1px solid rgba(68,246,151,0.1);
+    }
+    main { padding-left: 1rem; padding-right: 1rem; }
+    .sidebar-nav .nav-item span[class*="absolute"] { display: none; }
+  }
+  .caffeine-pulse { animation: caffeine-pulse 0.5s ease-in-out infinite alternate; }
+  @keyframes caffeine-pulse {
+    from { box-shadow: 0 0 10px rgba(68,246,151,0.4); }
+    to   { box-shadow: 0 0 25px rgba(68,246,151,0.8); }
+  }
+
+  /* Hero loader glow */
+  #hero-loader { box-shadow: 0 0 14px #44f697; }
+</style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary overflow-x-hidden">
+
+<!-- Canvas -->
+<canvas id="mouse-canvas"></canvas>
+<canvas id="matrix-canvas"></canvas>
+
+<!-- Shutdown Overlay -->
+<div id="shutdown-overlay">
+  <div class="text-center">
+    <p class="text-primary font-headline text-3xl md:text-5xl mb-4 opacity-0 transition-opacity duration-1000 delay-500" id="shutdown-message">THE LOOP CONTINUES.</p>
+    <p class="text-primary/60 font-body text-sm tracking-widest opacity-0 transition-opacity duration-1000 delay-1000" id="shutdown-submessage">SEE YOU AT 3 AM.</p>
+  </div>
+</div>
+
+<!-- Immersive BG -->
+<div class="fixed inset-0 spotlight pointer-events-none z-10 opacity-0 transition-opacity duration-500" id="spotlight"></div>
+<div class="fixed inset-0 dot-grid opacity-30 z-0 parallax-layer" data-depth="0.05"></div>
+<div class="fixed inset-0 scanline z-50"></div>
+
+<!-- Orbs -->
+<div class="floating-orb bg-primary w-96 h-96 -top-20 -left-20 animate-pulse-slow"></div>
+<div class="floating-orb bg-secondary w-[500px] h-[500px] bottom-1/4 -right-40 animate-pulse-slow" style="animation-delay:2s"></div>
+
+<!-- ═══ BOOT OVERLAY ═══ -->
+<div class="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center p-8 transition-opacity duration-1000" id="boot-overlay">
+  <div class="max-w-md w-full space-y-6">
+    <div class="flex items-center gap-4 mb-8">
+      <span class="material-symbols-outlined text-primary text-4xl animate-spin">sync</span>
+      <h1 class="font-headline text-2xl font-black text-primary glitch-text">ODYSSEY_OS v1.0.4</h1>
+    </div>
+    <div class="font-body text-[10px] text-primary/70 leading-relaxed h-32 overflow-hidden" id="boot-text"></div>
+    <div class="w-full h-1 bg-surface-container-high relative overflow-hidden">
+      <div class="h-full bg-primary w-0 absolute left-0 transition-all duration-300" id="boot-progress"></div>
+    </div>
+    <div class="text-right">
+      <span class="text-[9px] text-on-surface-variant font-label tracking-widest uppercase" id="boot-status">Initializing Kernel...</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="fixed top-0 left-0 w-full h-16 flex items-center px-6 justify-between bg-[#101319]/80 backdrop-blur-xl border-b border-[#44f697]/15 shadow-[0_0_20px_rgba(68,246,151,0.05)] z-50">
+  <div class="flex items-center gap-3 group cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <div class="relative w-8 h-8 flex items-center justify-center border border-primary/30 group-hover:border-primary transition-colors">
+      <span class="material-symbols-outlined text-[#44f697] text-xl">terminal</span>
+    </div>
+    <h1 class="font-headline font-bold text-[#44f697] tracking-tighter text-lg">ODYSSEY_V1.0</h1>
+  </div>
+  <div class="flex items-center gap-6">
+    <div class="hidden sm:flex flex-col items-end">
+      <span class="font-body text-[10px] text-[#44f697]" id="system-time">00:00:00</span>
+      <div class="flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+        <span class="font-body uppercase tracking-[0.2em] text-[8px] text-[#44f697]/60" id="system-status">NEURAL_LINK: ACTIVE</span>
+      </div>
+    </div>
+    <button class="material-symbols-outlined text-[#44f697] hover:bg-primary/10 p-2 rounded-full transition-all active:scale-95 magnetic" id="system-mode-toggle" title="Toggle System Mode">settings_input_component</button>
+  </div>
+</header>
+
+<!-- ═══ SIDEBAR NAV ═══ -->
+<nav class="sidebar-nav fixed left-0 top-0 h-full flex flex-col pt-20 z-40 bg-[#101319]/90 backdrop-blur-2xl border-r border-[#44f697]/10 w-16 items-center gap-8">
+  <div class="nav-item active-nav group relative flex items-center justify-center w-12 h-12 cursor-pointer transition-all" data-target="hero">
+    <span class="material-symbols-outlined">home</span>
+    <span class="absolute left-16 bg-surface-container-high px-2 py-1 text-[8px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-all z-50">CORE</span>
+  </div>
+  <div class="nav-item group relative flex items-center justify-center w-12 h-12 text-on-surface-variant hover:text-primary hover:bg-primary/10 cursor-pointer transition-all" data-target="learning">
+    <span class="material-symbols-outlined">menu_book</span>
+    <span class="absolute left-16 bg-surface-container-high px-2 py-1 text-[8px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-all z-50">PHASE_01</span>
+  </div>
+  <div class="nav-item group relative flex items-center justify-center w-12 h-12 text-on-surface-variant hover:text-primary hover:bg-primary/10 cursor-pointer transition-all" data-target="debugging">
+    <span class="material-symbols-outlined">bug_report</span>
+    <span class="absolute left-16 bg-surface-container-high px-2 py-1 text-[8px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-all z-50">PHASE_02</span>
+  </div>
+  <div class="nav-item group relative flex items-center justify-center w-12 h-12 text-on-surface-variant hover:text-primary hover:bg-primary/10 cursor-pointer transition-all" data-target="terminal-section">
+    <span class="material-symbols-outlined">terminal</span>
+    <span class="absolute left-16 bg-surface-container-high px-2 py-1 text-[8px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-all z-50">CONSOLE</span>
+  </div>
+  <div class="nav-item group relative flex items-center justify-center w-12 h-12 text-on-surface-variant hover:text-primary hover:bg-primary/10 cursor-pointer transition-all" data-target="deadlines">
+    <span class="material-symbols-outlined">schedule</span>
+    <span class="absolute left-16 bg-surface-container-high px-2 py-1 text-[8px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-all z-50">PHASE_03</span>
+  </div>
+  <div class="nav-item group relative flex items-center justify-center w-12 h-12 text-on-surface-variant hover:text-primary hover:bg-primary/10 cursor-pointer transition-all" data-target="success">
+    <span class="material-symbols-outlined">check_circle</span>
+    <span class="absolute left-16 bg-surface-container-high px-2 py-1 text-[8px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-all z-50">MERGED</span>
+  </div>
+</nav>
+
+<!-- Notifications -->
+<div class="fixed top-20 right-6 flex flex-col gap-3 z-[60] pointer-events-none" id="notification-area"></div>
+
+<!-- Caffeine Meter -->
+<aside class="fixed right-6 top-1/2 -translate-y-1/2 w-1.5 h-64 bg-surface-container-low rounded-full z-30 overflow-hidden hidden md:block border border-outline-variant/10">
+  <div class="w-full bg-primary shadow-[0_0_15px_rgba(68,246,151,0.5)] h-[0%] transition-all duration-700 ease-out absolute bottom-0" id="caffeine-fill"></div>
+  <div class="absolute -right-24 top-0 rotate-90 origin-left text-[9px] font-label tracking-[0.3em] text-primary/40 whitespace-nowrap">COGNITIVE_LOAD_INDEX</div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main class="pl-16 pr-4 pt-24 pb-32 max-w-4xl mx-auto relative z-10 md:pl-32">
+
+  <!-- HERO -->
+  <section class="min-h-[80vh] flex flex-col justify-center mb-40 reveal-on-scroll" id="hero">
+    <div class="inline-flex items-center gap-3 mb-6 px-3 py-1.5 bg-primary/5 border border-primary/20 text-primary text-[10px] tracking-widest uppercase w-fit rounded-sm">
+      <span class="w-2 h-2 bg-primary animate-ping rounded-full"></span>
+      SESSION_START: <span class="session-time">00:00:00</span>
+    </div>
+    <h2 class="font-headline text-5xl md:text-7xl font-black text-on-surface leading-[0.95] mb-8 glitch-text uppercase tracking-tighter">
+      <span class="block">THE FRONTEND</span>
+      <span class="text-primary hover:animate-flicker block">ODYSSEY.EXE</span>
+    </h2>
+    <p class="text-on-surface-variant text-base md:text-lg max-w-xl mb-12 border-l-4 border-primary pl-6 leading-relaxed">
+      Welcome, Developer. This is the log of a creator navigating the void between zero and one. An immersive record of syntax, caffeine, and breakthroughs.
+    </p>
+    <div class="relative w-full aspect-[21/9] overflow-hidden border border-outline-variant/20 interactive-card group rounded-lg">
+      <div class="w-full h-full bg-gradient-to-br from-surface-container-lowest to-background opacity-80"></div>
+      <div class="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-[2px]">
+        <div class="flex flex-col items-center">
+          <span class="material-symbols-outlined text-primary text-5xl mb-4 animate-float">rocket_launch</span>
+          <div class="text-[11px] font-body text-primary bg-background/90 px-6 py-3 border border-primary/40 tracking-widest uppercase">
+            INITIALIZING_CORE_LOGIC... <span id="logic-percent">0</span>%
+          </div>
+        </div>
+      </div>
+      <div class="absolute bottom-0 left-0 h-1 bg-primary/20 w-full">
+        <div class="h-full bg-primary w-0 transition-all duration-[4000ms] ease-out" id="hero-loader"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASE 01: LEARNING -->
+  <section class="mb-40 reveal-on-scroll" id="learning">
+    <div class="flex items-center gap-4 mb-12">
+      <span class="text-3xl font-headline font-black text-secondary/30">01</span>
+      <div class="h-[1px] flex-1 bg-gradient-to-r from-secondary/40 to-transparent"></div>
+      <span class="text-[10px] font-label text-secondary tracking-[0.4em] uppercase">The Awakening</span>
+    </div>
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <h3 class="text-3xl font-headline font-bold">First Principles</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          It started with a single tag. A world built in <code class="text-secondary bg-secondary/10 px-1">index.html</code>. We felt like architects. We felt like gods. Then we tried to center a <code class="text-secondary">&lt;div&gt;</code>.
+        </p>
+        <div class="flex gap-4">
+          <div class="flex-1 p-4 bg-surface-container rounded-lg border border-outline-variant/10 interactive-card">
+            <span class="material-symbols-outlined text-secondary mb-2">html</span>
+            <h4 class="text-xs font-bold uppercase mb-1">Structure</h4>
+            <p class="text-[10px] text-on-surface-variant">The skeleton of reality. Semantic, clean, yet fragile.</p>
+          </div>
+          <div class="flex-1 p-4 bg-surface-container rounded-lg border border-outline-variant/10 interactive-card">
+            <span class="material-symbols-outlined text-secondary mb-2">css</span>
+            <h4 class="text-xs font-bold uppercase mb-1">Style</h4>
+            <p class="text-[10px] text-on-surface-variant">The paint and the pain. Z-index 9999 is our savior.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl overflow-hidden shadow-2xl group transition-transform duration-700 hover:rotate-1">
+        <div class="flex items-center justify-between px-4 py-3 bg-surface-container-high border-b border-outline-variant/10">
+          <div class="flex gap-1.5">
+            <div class="w-2.5 h-2.5 rounded-full bg-error/50"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-tertiary/50"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-primary/50"></div>
+          </div>
+          <span class="text-[9px] font-label text-on-surface-variant tracking-widest">PHASE_01.JS</span>
+        </div>
+        <div class="p-6 font-body text-[12px] leading-relaxed text-secondary/80 h-64 overflow-y-auto" id="code-snippet">
+          <pre><span class="text-tertiary">const</span> <span class="text-primary">reality</span> = <span class="text-white">new</span> <span class="text-primary">Odyssey</span>({
+  user: <span class="text-secondary">'Novice'</span>,
+  confidence: <span class="text-white">100</span>,
+  frustration: <span class="text-white">0</span>
+});
+
+<span class="text-on-surface-variant">// The classic trap</span>
+<span class="text-tertiary">while</span> (reality.isLearning) {
+  <span class="text-primary">reality</span>.<span class="text-white">centerDiv</span>();
+  <span class="text-primary">reality</span>.<span class="text-white">confidence</span> -= <span class="text-white">10</span>;
+  <span class="text-primary">reality</span>.<span class="text-white">frustration</span> += <span class="text-white">20</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASE 02: DEBUGGING -->
+  <section class="mb-40 reveal-on-scroll" id="debugging">
+    <div class="flex items-center gap-4 mb-12">
+      <span class="text-3xl font-headline font-black text-error/30">02</span>
+      <div class="h-[1px] flex-1 bg-gradient-to-r from-error/40 to-transparent"></div>
+      <span class="text-[10px] font-label text-error tracking-[0.4em] uppercase">The Regression</span>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <!-- FIX: Bug counter card -->
+      <div class="bg-surface-container border border-error/20 p-6 flex flex-col items-center justify-center interactive-card group" id="bug-counter-card">
+        <span class="text-5xl font-headline font-black text-error glitch-text" id="bug-counter">404</span>
+        <span class="text-[9px] font-label text-error/60 tracking-widest mt-3 uppercase">Bugs To Squash</span>
+        <span class="text-[8px] text-on-surface-variant mt-2 opacity-50">(scroll to begin countdown)</span>
+      </div>
+      <!-- FIX: Coffee cup is now clickable and counts -->
+      <div class="bg-surface-container border border-primary/20 p-6 flex flex-col items-center justify-center interactive-card group cursor-pointer select-none" id="coffee-cup">
+        <span class="text-5xl font-headline font-black text-primary transition-all duration-200" id="cup-counter">0</span>
+        <span class="text-[9px] font-label text-primary/60 tracking-widest mt-3 uppercase">Coffee Cups</span>
+        <span class="text-[8px] text-primary/40 mt-2">(click to consume ☕)</span>
+      </div>
+      <div class="bg-surface-container border border-secondary/20 p-6 flex flex-col items-center justify-center interactive-card group">
+        <span class="text-5xl font-headline font-black text-secondary">∞</span>
+        <span class="text-[9px] font-label text-secondary/60 tracking-widest mt-3 uppercase">Tabs Open</span>
+      </div>
+    </div>
+    <div class="bg-surface-container-high border-l-4 border-error p-8 relative overflow-hidden group mb-12 interactive-card">
+      <div class="absolute -right-8 -top-8 opacity-10 group-hover:rotate-12 transition-transform duration-1000">
+        <span class="material-symbols-outlined text-[120px] text-error">warning</span>
+      </div>
+      <div class="relative z-10">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="material-symbols-outlined text-error animate-pulse">report</span>
+          <h4 class="font-bold text-lg text-on-surface">RUNTIME_EXCEPTION: STACK_OVERFLOW</h4>
+        </div>
+        <p class="text-on-surface-variant text-sm italic mb-6">
+          "Everything was working perfectly until I touched line 42. Now the whole UI is in another dimension."
+          <span class="hover:text-primary transition-colors cursor-pointer ml-1 select-none text-error font-bold" id="easter-egg-semicolon" title="Click me... if you dare">;</span>
+        </p>
+        <div class="h-48 bg-background border border-outline-variant/20 rounded p-4 font-body text-[11px] overflow-y-auto space-y-1" id="error-log">
+          <p class="text-error">[CRITICAL] ReferenceError: hope is not defined</p>
+          <p class="text-on-surface-variant opacity-50">[INFO] Retrying compilation...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE TERMINAL -->
+  <section class="mb-40 reveal-on-scroll" id="terminal-section">
+    <div class="flex items-center gap-4 mb-8">
+      <span class="text-3xl font-headline font-black text-primary/30">_</span>
+      <div class="h-[1px] flex-1 bg-gradient-to-r from-primary/40 to-transparent"></div>
+      <span class="text-[10px] font-label text-primary tracking-[0.4em] uppercase">The Terminal</span>
+    </div>
+    <div class="bg-[#0b0e13] border border-primary/20 rounded-xl overflow-hidden shadow-2xl transform transition-all duration-500 hover:scale-[1.01]" id="main-terminal">
+      <div class="flex items-center justify-between px-5 py-3 bg-surface-container-high border-b border-outline-variant/10">
+        <div class="flex items-center gap-4">
+          <div class="flex gap-1.5">
+            <div class="w-3 h-3 rounded-full bg-error"></div>
+            <div class="w-3 h-3 rounded-full bg-tertiary"></div>
+            <div class="w-3 h-3 rounded-full bg-primary"></div>
+          </div>
+          <span class="text-[10px] font-label text-primary/60 tracking-widest uppercase">ODYSSEY_SHELL_V2.0</span>
+        </div>
+        <div class="flex items-center gap-4 text-[9px] text-primary/40 uppercase font-label">
+          <span>PATH: /ROOT/ODYSSEY</span>
+          <span class="material-symbols-outlined text-xs">lock</span>
+        </div>
+      </div>
+      <div class="p-6 h-[400px] overflow-y-auto font-body text-[12px] text-primary/90 space-y-2 selection:bg-primary/20" id="terminal-output">
+        <div class="flex items-center gap-4 mb-4 pb-4 border-b border-primary/10">
+          <span class="material-symbols-outlined text-4xl text-primary">terminal</span>
+          <div>
+            <p class="font-bold text-sm tracking-widest">SYSTEM ONLINE</p>
+            <p class="opacity-50 text-[10px]">TYPE 'HELP' FOR LIST OF COMMANDS</p>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 bg-background/50 border-t border-primary/10 flex items-center gap-4">
+        <span class="text-primary font-bold animate-pulse">$</span>
+        <input autocomplete="off" class="bg-transparent border-none p-0 focus:ring-0 text-[13px] text-on-surface flex-1 font-body caret-primary outline-none" id="terminal-input" placeholder="Type a command and press Enter..." type="text"/>
+      </div>
+    </div>
+    <p class="mt-3 text-[10px] text-on-surface-variant/50 font-label tracking-widest text-center">
+      TRY: help · about · skills · status · whoami · date · clear · restart
+    </p>
+  </section>
+
+  <!-- PHASE 03: DEADLINES -->
+  <section class="mb-40 reveal-on-scroll" id="deadlines">
+    <div class="flex items-center gap-4 mb-12">
+      <span class="text-3xl font-headline font-black text-tertiary/30">03</span>
+      <div class="h-[1px] flex-1 bg-gradient-to-r from-tertiary/40 to-transparent"></div>
+      <span class="text-[10px] font-label text-tertiary tracking-[0.4em] uppercase">The Compression</span>
+    </div>
+    <div class="space-y-4 mb-12">
+      <!-- FIX: commit cards are clickable and expand -->
+      <div class="commit-card bg-surface-container p-5 border-r-4 border-primary/40 interactive-card rounded-lg overflow-hidden transition-all duration-300 cursor-pointer" id="commit-1">
+        <div class="flex justify-between items-start">
+          <div class="flex gap-4">
+            <span class="material-symbols-outlined text-primary transition-transform duration-300">commit</span>
+            <div>
+              <span class="text-[9px] font-bold text-primary tracking-widest">COMMIT_ID: af4520e</span>
+              <h5 class="text-sm font-bold mt-1">git commit -m "Fixed the fix for the previous fix"</h5>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[9px] text-on-surface-variant mt-1">2 MINS AGO</span>
+            <span class="text-primary text-[9px] expand-hint">[click to expand]</span>
+          </div>
+        </div>
+        <div class="commit-details mt-4 border-t border-outline-variant/10 pt-4 animate-reveal">
+          <div class="grid grid-cols-2 gap-4 text-[10px]">
+            <div>
+              <p class="text-primary font-bold mb-1">INSERTIONS (+)</p>
+              <p class="opacity-70">1,204 lines of pure chaos</p>
+            </div>
+            <div>
+              <p class="text-error font-bold mb-1">DELETIONS (-)</p>
+              <p class="opacity-70">4 lines of clean code (accidentally)</p>
+            </div>
+          </div>
+          <div class="mt-3 text-[10px] text-on-surface-variant/60 italic">
+            // Also deleted 3 comments that explained what the code did. RIP.
+          </div>
+        </div>
+      </div>
+
+      <div class="commit-card bg-surface-container p-5 border-r-4 border-tertiary/40 interactive-card rounded-lg transition-all duration-300 cursor-pointer" id="commit-2">
+        <div class="flex justify-between items-start">
+          <div class="flex gap-4">
+            <span class="material-symbols-outlined text-tertiary transition-transform duration-300">commit</span>
+            <div>
+              <span class="text-[9px] font-bold text-tertiary tracking-widest">COMMIT_ID: d44921x</span>
+              <h5 class="text-sm font-bold mt-1">git commit -m "Initial commit"</h5>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[9px] text-on-surface-variant mt-1">4 HOURS AGO</span>
+            <span class="text-tertiary text-[9px] expand-hint">[click to expand]</span>
+          </div>
+        </div>
+        <div class="commit-details mt-4 border-t border-outline-variant/10 pt-4">
+          <div class="grid grid-cols-2 gap-4 text-[10px]">
+            <div>
+              <p class="text-primary font-bold mb-1">INSERTIONS (+)</p>
+              <p class="opacity-70">1 line: console.log("hello")</p>
+            </div>
+            <div>
+              <p class="text-error font-bold mb-1">DELETIONS (-)</p>
+              <p class="opacity-70">0 (peak clean code era)</p>
+            </div>
+          </div>
+          <div class="mt-3 text-[10px] text-on-surface-variant/60 italic">
+            // This was the last moment of pure confidence. Cherish it.
+          </div>
+        </div>
+      </div>
+
+      <div class="commit-card bg-surface-container p-5 border-r-4 border-error/40 interactive-card rounded-lg transition-all duration-300 cursor-pointer">
+        <div class="flex justify-between items-start">
+          <div class="flex gap-4">
+            <span class="material-symbols-outlined text-error transition-transform duration-300">commit</span>
+            <div>
+              <span class="text-[9px] font-bold text-error tracking-widest">COMMIT_ID: ff3a01z</span>
+              <h5 class="text-sm font-bold mt-1">git commit -m "PLEASE WORK I HAVE A DEADLINE"</h5>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[9px] text-on-surface-variant mt-1">JUST NOW</span>
+            <span class="text-error text-[9px] expand-hint">[click to expand]</span>
+          </div>
+        </div>
+        <div class="commit-details mt-4 border-t border-outline-variant/10 pt-4">
+          <div class="grid grid-cols-2 gap-4 text-[10px]">
+            <div>
+              <p class="text-primary font-bold mb-1">INSERTIONS (+)</p>
+              <p class="opacity-70">847 commented-out lines</p>
+            </div>
+            <div>
+              <p class="text-error font-bold mb-1">DELETIONS (-)</p>
+              <p class="opacity-70">The last of your sleep schedule</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative aspect-[21/9] rounded-xl overflow-hidden group border border-outline-variant/10">
+      <div class="w-full h-full bg-gradient-to-br from-surface-container-lowest to-surface-dim opacity-80 grayscale"></div>
+      <div class="absolute inset-0 bg-background/60 backdrop-blur-sm flex flex-col p-12 justify-center items-center text-center">
+        <span class="material-symbols-outlined text-6xl text-tertiary mb-6 animate-float">nights_stay</span>
+        <h5 class="text-3xl font-headline font-black mb-4 glitch-text">3:00 AM EUREKA</h5>
+        <p class="text-sm text-on-surface-variant max-w-md mx-auto leading-relaxed">"The bug wasn't in the code. It was in my understanding of CSS grid. Everything is clear now. I can see the matrix."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUCCESS -->
+  <section class="mb-40 text-center reveal-on-scroll" id="success">
+    <div class="relative py-24 bg-primary/5 rounded-3xl border border-primary/20 overflow-hidden">
+      <div class="absolute inset-0 dot-grid opacity-20 pointer-events-none"></div>
+      <div class="relative z-10 flex flex-col items-center">
+        <div class="w-32 h-32 bg-primary/20 rounded-full border-2 border-primary flex items-center justify-center mb-10 shadow-[0_0_50px_rgba(68,246,151,0.3)] animate-float">
+          <span class="material-symbols-outlined text-6xl text-primary">check_circle</span>
+        </div>
+        <h2 class="font-headline text-5xl font-black mb-6 uppercase italic tracking-tighter">PR #001: MERGED</h2>
+        <p class="text-xs text-primary font-bold tracking-[0.6em] uppercase mb-16 px-8 py-2 bg-primary/10 rounded-full">Validation Successful // Legacy Established</p>
+        <div class="flex flex-wrap justify-center gap-6 px-4">
+          <div class="bg-surface-container-high border border-outline-variant/10 px-8 py-6 rounded-2xl interactive-card text-center min-w-[200px]">
+            <span class="material-symbols-outlined text-secondary text-3xl mb-3">workspace_premium</span>
+            <p class="text-[9px] text-secondary font-label uppercase tracking-widest mb-1">Rank Achieved</p>
+            <p class="text-lg font-bold">SENIOR_GOD_MODE</p>
+          </div>
+          <div class="bg-surface-container-high border border-outline-variant/10 px-8 py-6 rounded-2xl interactive-card text-center min-w-[200px]">
+            <span class="material-symbols-outlined text-primary text-3xl mb-3">speed</span>
+            <p class="text-[9px] text-primary font-label uppercase tracking-widest mb-1">Velocity</p>
+            <p class="text-lg font-bold">1.2K_LOC/HR</p>
+          </div>
+          <div class="bg-surface-container-high border border-outline-variant/10 px-8 py-6 rounded-2xl interactive-card text-center min-w-[200px]">
+            <span class="material-symbols-outlined text-tertiary text-3xl mb-3">coffee</span>
+            <p class="text-[9px] text-tertiary font-label uppercase tracking-widest mb-1">Fuel Consumed</p>
+            <p class="text-lg font-bold" id="success-cups">∞ CUPS</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTION LAUNCH -->
+  <section class="mb-32 reveal-on-scroll" id="production">
+    <div class="bg-[#0b0e13] border border-primary/40 rounded-3xl p-12 flex flex-col items-center text-center relative overflow-hidden group">
+      <div class="absolute -right-20 -top-20 opacity-10 group-hover:opacity-20 transition-all duration-1000 group-hover:scale-125">
+        <span class="material-symbols-outlined text-[300px] text-primary">rocket_launch</span>
+      </div>
+      <h2 class="font-headline text-4xl font-black mb-6 glitch-text uppercase tracking-tighter">SYSTEM_READY_FOR_DEPLOY</h2>
+      <div class="w-full max-w-2xl bg-background border border-primary/20 rounded-xl p-8 font-body text-[12px] text-left mb-12 group-hover:border-primary/50 transition-colors shadow-2xl">
+        <p class="text-primary mb-4">$ npm run build --production</p>
+        <div class="space-y-2 opacity-80" id="build-logs">
+          <p class="typing-effect">Creating optimized build...</p>
+          <p class="text-secondary">Assets: main.js (14.2MB), styles.css (2.1MB)</p>
+          <p class="text-primary">Status: SUCCESSFUL. Ready to ship to the universe.</p>
+        </div>
+      </div>
+      <!-- FIX: restart-cycle button fully wired -->
+      <button class="px-12 py-5 bg-primary text-on-primary font-headline font-black text-lg uppercase tracking-[0.2em] rounded-sm hover:brightness-110 shadow-[0_10px_40px_rgba(68,246,151,0.3)] transition-all active:scale-95 group magnetic" id="restart-cycle">
+        <div class="flex items-center gap-4">
+          <span>GIT INIT NEW_EXPEDITION</span>
+          <span class="material-symbols-outlined group-hover:translate-x-2 transition-transform">arrow_forward</span>
+        </div>
+      </button>
+      <p class="mt-8 text-[10px] text-on-surface-variant tracking-[0.5em] uppercase animate-pulse">Eternal loops. Perpetual growth.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="py-12 border-t border-outline-variant/10 text-center relative z-10">
+  <div class="max-w-4xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+    <p class="text-[10px] text-on-surface-variant font-label tracking-widest">© 2025 FRONTEND_ODYSSEY // IIT_PATNA // THEME_05</p>
+    <div class="flex gap-8">
+      <span class="material-symbols-outlined text-primary/40 hover:text-primary transition-colors cursor-pointer">public</span>
+      <span class="material-symbols-outlined text-primary/40 hover:text-primary transition-colors cursor-pointer">code</span>
+      <span class="material-symbols-outlined text-primary/40 hover:text-primary transition-colors cursor-pointer">share</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════
+// 1. PARTICLE SYSTEM
+// ═══════════════════════════════════════════
+const canvas = document.getElementById('mouse-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+const colors = ['#44f697','#00d97e','#22e286','#a4c9ff'];
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize);
+resize();
+
+class Particle {
+  constructor(x, y) {
+    this.x = x; this.y = y;
+    this.size = Math.random() * 3 + 1;
+    this.speedX = (Math.random() - 0.5) * 3;
+    this.speedY = (Math.random() - 0.5) * 3;
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+    this.opacity = 1;
+  }
+  update() { this.x += this.speedX; this.y += this.speedY; this.opacity -= 0.025; }
+  draw() {
+    ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
+    particles[i].draw();
+    if (particles[i].opacity <= 0) particles.splice(i, 1);
+  }
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+window.addEventListener('mousemove', (e) => {
+  for (let i = 0; i < 2; i++) particles.push(new Particle(e.clientX, e.clientY));
+});
+
+// ═══════════════════════════════════════════
+// 2. TERMINAL COMMANDS
+// ═══════════════════════════════════════════
+const terminalInput = document.getElementById('terminal-input');
+const terminalOutput = document.getElementById('terminal-output');
+
+const terminalCommands = {
+  help:    "COMMANDS: help · about · skills · status · whoami · date · clear · restart · coffee · bugs",
+  about:   "ODYSSEY_OS v1.0.4 — A narrative engine for developers navigating the void between design and deployment.",
+  skills:  "JS/TS · CSS/SCSS · React · Tailwind · GSAP · Canvas API · Caffeine · Sleep_Deprivation · Stack_Overflow",
+  status:  () => {
+    const s = [
+      "OVERCLOCKING... 114% efficiency reached.",
+      `COFFEE_RESERVES: ${cups} cups consumed. CRITICAL if < 3.`,
+      "CPU_LOAD: High. EMOTIONAL_STATE: Stable(ish).",
+      "Awaiting pull request approval. Anxiety: CRITICAL.",
+      "node_modules: 847MB. Laptop fan: screaming."
+    ];
+    return s[Math.floor(Math.random() * s.length)];
+  },
+  whoami:  "An architect of digital experiences. A wrangler of pixels. A victim of Z-Index issues.",
+  date:    () => `STARDATE: ${new Date().toISOString()}`,
+  coffee:  () => {
+    cups++;
+    document.getElementById('cup-counter').textContent = cups;
+    checkCoffeeAchievement();
+    return `☕ Cup #${cups} consumed. Productivity ${cups < 5 ? 'increased' : 'entered hyperdrive'}.`;
+  },
+  bugs:    () => {
+    const b = document.getElementById('bug-counter').textContent;
+    return `Current bug count: ${b}. Each one is a learning opportunity. (Nobody believes this.)`;
+  },
+  clear:   "CLEAR",
+  restart: () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => showNotification("REBOOT_INITIATED", "Scrolling to beginning. The loop restarts.", "primary"), 300);
+    return "INITIATING REBOOT... scroll up.";
+  }
+};
+
+const unknownResponses = [
+  "Unknown command. Is your compiler okay?",
+  "Command not found. Try: npm install [command]",
+  "Error: User intelligence not found for that request.",
+  "Syntax Error. Did you forget a semicolon?",
+  "Have you tried turning it off and on again?",
+  "404: Command not found. Like work-life balance."
+];
+
+terminalInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const cmd = terminalInput.value.toLowerCase().trim();
+    if (!cmd) return;
+
+    const promptLine = document.createElement('p');
+    promptLine.innerHTML = `<span class="text-primary/40">$ ${escapeHtml(cmd)}</span>`;
+    terminalOutput.appendChild(promptLine);
+
+    if (cmd === 'clear') {
+      terminalOutput.innerHTML = '';
+    } else if (terminalCommands[cmd]) {
+      const result = typeof terminalCommands[cmd] === 'function' ? terminalCommands[cmd]() : terminalCommands[cmd];
+      const response = document.createElement('p');
+      response.classList.add('text-primary', 'italic', 'opacity-90');
+      response.innerText = `> ${result}`;
+      terminalOutput.appendChild(response);
+    } else {
+      const error = document.createElement('p');
+      error.classList.add('text-error');
+      error.innerText = `! ${unknownResponses[Math.floor(Math.random() * unknownResponses.length)]}`;
+      terminalOutput.appendChild(error);
+    }
+    terminalInput.value = '';
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+  }
+});
+
+function escapeHtml(text) {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// ═══════════════════════════════════════════
+// 3. MATRIX RAIN EASTER EGG
+// ═══════════════════════════════════════════
+const matrixCanvas = document.getElementById('matrix-canvas');
+const mctx = matrixCanvas.getContext('2d');
+
+document.getElementById('easter-egg-semicolon').addEventListener('click', () => {
+  matrixCanvas.style.display = 'block';
+  matrixCanvas.width = window.innerWidth;
+  matrixCanvas.height = window.innerHeight;
+  showNotification("OVERRIDE_ACTIVE", "Glitch protocol initiated. Reality destabilized.", "error");
+
+  const columns = Math.floor(matrixCanvas.width / 20);
+  const drops = Array(columns).fill(1);
+
+  function drawMatrix() {
+    mctx.fillStyle = 'rgba(0,0,0,0.05)';
+    mctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    mctx.fillStyle = '#0F0';
+    mctx.font = '15px monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const text = String.fromCharCode(Math.random() * 128);
+      mctx.fillText(text, i * 20, drops[i] * 20);
+      if (drops[i] * 20 > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+
+  const interval = setInterval(drawMatrix, 33);
+  document.body.classList.add('animate-flicker');
+  setTimeout(() => {
+    clearInterval(interval);
+    mctx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    matrixCanvas.style.display = 'none';
+    document.body.classList.remove('animate-flicker');
+    showNotification("SYSTEM_RESTORED", "Vulnerability patched. Reality stabilized.", "primary");
+  }, 4000);
+});
+
+// ═══════════════════════════════════════════
+// 4. MAGNETIC BUTTONS
+// ═══════════════════════════════════════════
+document.querySelectorAll('.magnetic').forEach(btn => {
+  btn.addEventListener('mousemove', (e) => {
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+  });
+  btn.addEventListener('mouseleave', () => { btn.style.transform = 'translate(0px, 0px)'; });
+});
+
+// ═══════════════════════════════════════════
+// 5. CLOCK + SPOTLIGHT + PARALLAX
+// ═══════════════════════════════════════════
+const updateTime = () => {
+  const now = new Date();
+  const timeStr = now.toTimeString().split(' ')[0];
+  document.getElementById('system-time').innerText = timeStr;
+  document.querySelectorAll('.session-time').forEach(el => el.innerText = timeStr);
+};
+setInterval(updateTime, 1000);
+updateTime();
+
+const spotlight = document.getElementById('spotlight');
+document.addEventListener('mousemove', (e) => {
+  spotlight.style.opacity = '1';
+  spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
+  spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
+  // Parallax
+  const layers = document.querySelectorAll('.parallax-layer');
+  const x = (window.innerWidth - e.pageX * 2) / 100;
+  const y = (window.innerHeight - e.pageY * 2) / 100;
+  layers.forEach(layer => {
+    const depth = layer.getAttribute('data-depth');
+    layer.style.transform = `translate3d(${x * depth}px, ${y * depth}px, 0)`;
+  });
+});
+
+// ═══════════════════════════════════════════
+// 6. NOTIFICATION ENGINE
+// ═══════════════════════════════════════════
+function showNotification(title, msg, type = "primary") {
+  const area = document.getElementById('notification-area');
+  const toast = document.createElement('div');
+  const bdr = type === 'error' ? 'border-error/30' : type === 'secondary' ? 'border-secondary/30' : 'border-primary/30';
+  const txt = type === 'error' ? 'text-error' : type === 'secondary' ? 'text-secondary' : 'text-primary';
+  const bg  = type === 'error' ? 'bg-error/5'  : type === 'secondary' ? 'bg-secondary/5'  : 'bg-primary/5';
+  toast.className = `${bg} border ${bdr} backdrop-blur-md p-4 flex items-center gap-3 transition-all duration-500 translate-x-10 opacity-0 min-w-[280px] rounded-sm pointer-events-none`;
+  toast.innerHTML = `
+    <span class="material-symbols-outlined ${txt} text-xl animate-pulse">info</span>
+    <div class="text-[10px] font-body ${txt} leading-tight">
+      <p class="font-bold tracking-widest uppercase mb-1">${title}</p>
+      <p class="opacity-80">${msg}</p>
+    </div>`;
+  area.appendChild(toast);
+  setTimeout(() => toast.classList.remove('translate-x-10', 'opacity-0'), 100);
+  setTimeout(() => {
+    toast.classList.add('translate-x-10', 'opacity-0');
+    setTimeout(() => toast.remove(), 500);
+  }, 4500);
+}
+
+// ═══════════════════════════════════════════
+// 7. SCROLL LOGIC — caffeine + shutdown + status
+// ═══════════════════════════════════════════
+let lastScrollY = 0;
+let scrollSpeed = 0;
+
+window.addEventListener('scroll', () => {
+  const winScroll = document.documentElement.scrollTop;
+  const height    = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled  = (winScroll / height) * 100;
+
+  // Caffeine bar fills from BOTTOM
+  const fill = document.getElementById('caffeine-fill');
+  fill.style.height = scrolled + "%";
+
+  scrollSpeed = Math.abs(winScroll - lastScrollY);
+  const bar = fill.parentElement;
+  if (scrollSpeed > 30) bar.classList.add('caffeine-pulse');
+  else bar.classList.remove('caffeine-pulse');
+  lastScrollY = winScroll;
+
+  // Status text
+  const statusEl = document.getElementById('system-status');
+  if      (scrolled > 95) statusEl.innerText = 'NEURAL_LINK: UPLOAD_COMPLETE';
+  else if (scrolled > 60) statusEl.innerText = 'NEURAL_LINK: OPTIMIZING_OUTPUT';
+  else if (scrolled > 30) statusEl.innerText = 'NEURAL_LINK: PROCESSING_PHASE_01';
+  else                    statusEl.innerText = 'NEURAL_LINK: ACTIVE';
+
+  // Shutdown overlay
+  const so = document.getElementById('shutdown-overlay');
+  if (scrolled >= 99.5) {
+    so.style.opacity = '1';
+    so.style.pointerEvents = 'all';
+    document.getElementById('shutdown-message').classList.replace('opacity-0', 'opacity-100');
+    document.getElementById('shutdown-submessage').classList.replace('opacity-0', 'opacity-100');
+    // Click overlay to dismiss
+    so.onclick = () => {
+      so.style.opacity = '0';
+      so.style.pointerEvents = 'none';
+    };
+  } else {
+    so.style.opacity = '0';
+    so.style.pointerEvents = 'none';
+  }
+});
+
+// ═══════════════════════════════════════════
+// 8. INTERSECTION OBSERVER — reveals + nav + notifications
+// ═══════════════════════════════════════════
+let bugCounterTriggered = false;
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      const id = entry.target.id;
+
+      // Update nav
+      document.querySelectorAll('.nav-item').forEach(nav => {
+        if (nav.dataset.target === id) {
+          nav.classList.add('active-nav');
+          nav.classList.remove('text-on-surface-variant');
+        } else {
+          nav.classList.remove('active-nav');
+          nav.classList.add('text-on-surface-variant');
+        }
+      });
+
+      switch (id) {
+        case 'hero':
+          // FIX 1: Hero loader + percentage
+          setTimeout(() => {
+            document.getElementById('hero-loader').style.width = '100%';
+            let p = 0;
+            const pi = setInterval(() => {
+              p = Math.min(p + 1, 100);
+              const el = document.getElementById('logic-percent');
+              if (el) el.textContent = p;
+              if (p >= 100) clearInterval(pi);
+            }, 40);
+          }, 600);
+          break;
+
+        case 'learning':
+          showNotification("PHASE_01: LEARNING", "Bootstrapping fundamental tags into memory.", "secondary");
+          break;
+
+        case 'debugging':
+          showNotification("PHASE_02: REGRESSION", "Critical bug detected. Rerouting coffee.", "error");
+          // FIX 4: bug counter animates down
+          if (!bugCounterTriggered) {
+            bugCounterTriggered = true;
+            let bugs = 404;
+            const bi = setInterval(() => {
+              bugs -= Math.floor(Math.random() * 7 + 3);
+              if (bugs <= 42) { bugs = 42; clearInterval(bi); }
+              const el = document.getElementById('bug-counter');
+              if (el) {
+                el.textContent = bugs;
+                if (bugs <= 42) el.classList.add('low');
+              }
+            }, 55);
+          }
+          break;
+
+        case 'deadlines':
+          showNotification("PHASE_03: COMPRESSION", "Time dilation active. 1 hour = 5 minutes.", "primary");
+          break;
+
+        case 'success':
+          showNotification("MILESTONE: MERGED", "Validation successful. Legacy entry created.", "primary");
+          document.getElementById('success-cups').textContent = `${cups || '∞'} CUPS`;
+          break;
+
+        case 'production':
+          showNotification("DEPLOY: INITIATED", "Shipping to the universe. Fingers crossed.", "secondary");
+          break;
+      }
+    }
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+
+// ═══════════════════════════════════════════
+// 9. FIX: NAV DOT CLICK-TO-SCROLL
+// ═══════════════════════════════════════════
+document.querySelectorAll('.nav-item').forEach(nav => {
+  nav.addEventListener('click', () => {
+    const target = document.getElementById(nav.dataset.target);
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// ═══════════════════════════════════════════
+// 10. FIX: COFFEE CUP CLICK COUNTER
+// ═══════════════════════════════════════════
+let cups = 0;
+
+function checkCoffeeAchievement() {
+  if (cups === 3)  showNotification("COFFEE_MILESTONE", "3 cups. You're basically a developer now.", "primary");
+  if (cups === 5)  showNotification("OVERDOSE_WARNING", "Caffeine critical. Hands noticeably shaking.", "error");
+  if (cups === 10) showNotification("ASCENDED", "10 cups. You have transcended the need for sleep.", "secondary");
+  if (cups === 20) showNotification("LEGENDARY", "20 cups. You ARE the caffeine at this point.", "error");
+}
+
+document.getElementById('coffee-cup').addEventListener('click', () => {
+  cups++;
+  const counter = document.getElementById('cup-counter');
+  counter.textContent = cups;
+  counter.style.transform = 'scale(1.4)';
+  counter.style.color = cups >= 10 ? '#ffcec9' : '#44f697';
+  setTimeout(() => {
+    counter.style.transform = 'scale(1)';
+  }, 200);
+  checkCoffeeAchievement();
+
+  // Add a coffee entry to error log
+  if (cups % 5 === 0) {
+    const log = document.getElementById('error-log');
+    if (log) {
+      const p = document.createElement('p');
+      p.className = 'text-primary';
+      p.textContent = `[INFO] Coffee intake: ${cups} cups. Cognitive load index: ${Math.min(cups * 8, 99)}%.`;
+      log.appendChild(p);
+      log.scrollTop = log.scrollHeight;
+    }
+  }
+});
+
+// ═══════════════════════════════════════════
+// 11. FIX: COMMIT CARD EXPAND ON CLICK
+// ═══════════════════════════════════════════
+document.querySelectorAll('.commit-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const isExpanded = card.classList.contains('expanded');
+    // Close all first
+    document.querySelectorAll('.commit-card').forEach(c => {
+      c.classList.remove('expanded');
+      const hint = c.querySelector('.expand-hint');
+      if (hint) hint.textContent = '[click to expand]';
+    });
+    // Toggle clicked
+    if (!isExpanded) {
+      card.classList.add('expanded');
+      const hint = card.querySelector('.expand-hint');
+      if (hint) hint.textContent = '[click to collapse]';
+    }
+  });
+});
+
+// ═══════════════════════════════════════════
+// 12. FIX: RESTART CYCLE BUTTON
+// ═══════════════════════════════════════════
+document.getElementById('restart-cycle').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => {
+    showNotification("NEW_EXPEDITION_STARTED", "git init. The eternal loop continues.", "primary");
+  }, 800);
+  setTimeout(() => {
+    showNotification("ODYSSEY_RELOADING", "Coffee reserves replenished. Bugs regenerated.", "secondary");
+  }, 2200);
+});
+
+// ═══════════════════════════════════════════
+// 13. BOOT SEQUENCE
+// ═══════════════════════════════════════════
+const bootLines = [
+  "> CONNECTING TO NEURAL_NET...",
+  "> UPLOADING CONSCIOUSNESS...",
+  "> BYPASSING MAIN_FRAME_FIREWALL...",
+  "> DECRYPTING HUMAN_ERROR_LOGS...",
+  "> MOUNTING /DRIVE/CREATIVITY...",
+  "> VALIDATING coffee.jar...",
+  "> CACHE_FLUSH_SUCCESSFUL.",
+  "> ODYSSEY_PROTOCOL_INITIATED."
+];
+
+let bootIndex = 0;
+const runBoot = () => {
+  if (bootIndex < bootLines.length) {
+    const p = document.createElement('p');
+    p.className = "mb-1 opacity-0 transition-opacity duration-300";
+    p.innerText = bootLines[bootIndex];
+    document.getElementById('boot-text').appendChild(p);
+    setTimeout(() => p.classList.remove('opacity-0'), 50);
+    bootIndex++;
+    document.getElementById('boot-progress').style.width = `${(bootIndex / bootLines.length) * 100}%`;
+    document.getElementById('boot-status').innerText = bootLines[bootIndex - 1].replace('> ', '');
+    setTimeout(runBoot, 380 + Math.random() * 340);
+  } else {
+    document.getElementById('boot-status').innerText = "READY_TO_PROCEED ✓";
+    setTimeout(() => {
+      const overlay = document.getElementById('boot-overlay');
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      setTimeout(() => overlay.style.display = 'none', 1000);
+      // Trigger hero after boot
+      setTimeout(() => {
+        document.getElementById('hero-loader').style.width = '100%';
+        let p = 0;
+        const pi = setInterval(() => {
+          p = Math.min(p + 1, 100);
+          const el = document.getElementById('logic-percent');
+          if (el) el.textContent = p;
+          if (p >= 100) clearInterval(pi);
+        }, 40);
+      }, 200);
+    }, 900);
+  }
+};
+runBoot();
+
+// ═══════════════════════════════════════════
+// 14. DYNAMIC ERROR LOG FEED
+// ═══════════════════════════════════════════
+const errorMessages = [
+  { c: 'text-error',          m: '[CRITICAL] TypeError: Cannot read properties of undefined' },
+  { c: 'text-on-surface-variant opacity-50', m: '[INFO] Attempting graceful recovery...' },
+  { c: 'text-error',          m: '[ERROR] 404: Motivation not found' },
+  { c: 'text-secondary',      m: '[DEBUG] Stack trace: line 42 → line 42 → line 42 (infinite)' },
+  { c: 'text-error',          m: '[CRITICAL] git blame: it was you. It was always you.' },
+  { c: 'text-on-surface-variant opacity-50', m: '[INFO] Consulting Stack Overflow...' },
+  { c: 'text-secondary',      m: '[WARN] 23 tabs open simultaneously. Memory is crying.' },
+  { c: 'text-primary',        m: '[LOG] npm install hope — not found in registry' },
+  { c: 'text-error',          m: '[ERROR] Semicolon missing. Runtime weeping.' },
+  { c: 'text-on-surface-variant opacity-50', m: '[INFO] Recompiling optimism...' },
+];
+let errorIdx = 2;
+setInterval(() => {
+  const log = document.getElementById('error-log');
+  if (!log) return;
+  const msg = errorMessages[errorIdx % errorMessages.length];
+  const p = document.createElement('p');
+  p.className = msg.c;
+  p.textContent = msg.m;
+  log.appendChild(p);
+  log.scrollTop = log.scrollHeight;
+  // Keep log trimmed
+  while (log.children.length > 20) log.removeChild(log.firstChild);
+  errorIdx++;
+}, 2800);
+</script>
+</body>
+</html>
