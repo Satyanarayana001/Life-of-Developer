@@ -11,9 +11,7 @@ An immersive scroll-driven storytelling website | Theme 5: The Life of a Develop
  
 ## 🔗 Live Demo
  
-**[▶ View Live](https://your-deployment-link.netlify.app)**
- 
-> *(Replace with your actual Netlify/Vercel URL after deployment)*
+**[▶ View Live](https://life-of-developer.vercel.app/)**
  
 ---
  
